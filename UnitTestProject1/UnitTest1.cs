@@ -11,10 +11,18 @@ namespace UnitTestProject1
         [TestMethod]
         public void SaveTest()
         {
-            var filePath = Path.Combine("c:\\temp", "text1.txt");
+            var filePath = Path.Combine(Path.GetTempPath(), "text1.txt");
             var text = new HufCode("Идея, положенная в основу кодировании Хаффмана, " +
                                    "основана на частоте появления символа в последовательности.");
             text.Save(filePath);
+        }
+        [TestMethod]
+        public void CountTest()
+        {
+            var filePath = Path.Combine(Path.GetTempPath(), "text.txt");
+            var text = new HufCode("aba");
+            text.Save(filePath);
+            text.CountDictionary(filePath);
         }
     }
 }

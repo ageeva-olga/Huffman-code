@@ -9,17 +9,35 @@ namespace Huffman_code
 {
     public class HufCode
     {
-            public string Text { get; set; }
-            public HufCode(string text)
+        public string Text { get; set; }
+        public HufCode(string text)
+        {
+            Text = text;
+        }
+        public void Save(string path)
+        {
+            using (var writetext = new StreamWriter(path))
             {
-                Text = text;
+                writetext.WriteLine(string.Format(Text));
             }
-            public void Save(string path)
+        }
+        public Dictionary<char, int> CountDictionary(string path)
+        {
+            using (var streamReader = new StreamReader(path))
             {
-                using (var writetext = new StreamWriter(path))
+                var text = streamReader.ReadToEnd();
+                var charsCountDic = new Dictionary<char, int>();
+                for(int i = 0; i<text.Length-2; i++)
                 {
-                    writetext.WriteLine(string.Format(Text));
+                    var symbol = text[i];
+                    if (!charsCountDic.ContainsKey(symbol))
+                        charsCountDic.Add(symbol, 1);
+                    else
+                        charsCountDic[symbol] = charsCountDic[symbol] + 1;
+                   
                 }
+                return charsCountDic;
             }
+        }
     }
 }
