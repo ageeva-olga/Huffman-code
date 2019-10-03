@@ -20,7 +20,7 @@ namespace UnitTestProject1
         public void CountTest()
         {
             var filePath = Path.Combine(Path.GetTempPath(), "text.txt");
-            var text = new HufCode("aba");
+            var text = new HufCode("ababb");
             text.Save(filePath);
             text.CountDictionary(filePath);
         }

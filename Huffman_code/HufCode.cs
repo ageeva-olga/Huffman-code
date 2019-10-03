@@ -34,8 +34,8 @@ namespace Huffman_code
                         charsCountDic.Add(symbol, 1);
                     else
                         charsCountDic[symbol] = charsCountDic[symbol] + 1;
-                   
                 }
+                var sortedDic = charsCountDic.OrderByDescending(x => x.Value).ToDictionary(x => x.Key);// Dictonary<char,int>() { Key, Value }
                 return charsCountDic;
             }
         }
