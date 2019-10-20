@@ -145,7 +145,7 @@ namespace Huffman_code
         }
         public string RestoreText(Node tree, string bits)
         {
-
+            return "";
         }
     }
 }
