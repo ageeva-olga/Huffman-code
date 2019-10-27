@@ -15,11 +15,17 @@ namespace UnitTestProject1
                                    "основана на частоте появления символа в последовательности.";
             var filePath = Path.Combine(Path.GetTempPath(), "text1.txt");
             var hufCode = new HufCode(text);
-            hufCode.Save(filePath);
+            var table = hufCode.MakeHuffmanTable();
+            var tree = hufCode.MakeHuffmanTree(table);
+            var treeCode = hufCode.GetHuffmanTable(tree);
+            int tail = 0;
+
+            var byteArray = hufCode.GetBynary(treeCode, out tail);
+            hufCode.Save(filePath, tree, tail, byteArray);
             hufCode.Text = "";
 
-            hufCode.Load(filePath);
-            Assert.AreEqual(text, hufCode.Text);
+            var textResult = hufCode.Load(filePath);
+            Assert.AreEqual(text, textResult);
         }
         [TestMethod]
         public void CountTest()

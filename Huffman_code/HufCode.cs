@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,20 +20,7 @@ namespace Huffman_code
         {
             Text = text;
         }
-        public void Save(string path)
-        {
-            using (var writetext = new StreamWriter(path))
-            {
-                writetext.WriteLine(string.Format(Text));
-            }
-        }
-        public void Load(string path)
-        {
-            using (var streamReader = new StreamReader(path))
-            {
-                Text = streamReader.ReadToEnd().Trim();
-            }
-        }
+
         public KeyValuePair<char, int>[] MakeHuffmanTable()
         {
 
@@ -164,6 +152,46 @@ namespace Huffman_code
                 }
             }
             return text;
+        }
+        public void Save(string path, Node tree, int tail, byte[] bytes)
+        {
+            var compressedFile = new CompressedFile(tree, bytes, tail);
+            string json = JsonConvert.SerializeObject(compressedFile, Formatting.None);
+            using (var writetext = new StreamWriter(path))
+            {
+                writetext.WriteLine(json);
+            }
+        }
+        public string Load(string path)
+        {
+            CompressedFile compressedFile = null;
+            using (var streamReader = new StreamReader(path))
+            {
+                var fileText = streamReader.ReadToEnd();
+                compressedFile = JsonConvert.DeserializeObject<CompressedFile>(fileText);
+            }
+            var bits = RestorBynaryString(compressedFile.Bytes, compressedFile.Tail);
+            var text = RestoreText(compressedFile.Tree, bits);
+            return text;
+        }
+
+        public string LoadText(string path)
+        {
+            path = Path.GetFullPath(path);
+            using (var streamReader = new StreamReader(Path.GetFullPath(path)))
+            {
+                var fileText = streamReader.ReadToEnd();
+                return fileText;
+            }
+        }
+
+        public void SaveText(string path, string text)
+        {
+            path = Path.GetFullPath(path);
+            using (var writetext = new StreamWriter(path))
+            {
+                writetext.WriteLine(text);
+            }
         }
     }
 }
