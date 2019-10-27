@@ -145,7 +145,25 @@ namespace Huffman_code
         }
         public string RestoreText(Node tree, string bits)
         {
-            return "";
+            var node = tree;
+            string text = "";
+            for (int i = 0; i<bits.Length; i++)
+            {
+                    if(bits[i] == '1' && node.RightNode != null)
+                    {
+                        node = node.RightNode;
+                    }
+                    else if(node.LeftNode != null)
+                    {
+                        node = node.LeftNode;
+                    }
+                if (node.Value != null)
+                {
+                    text += node.Value;
+                    node = tree;
+                }
+            }
+            return text;
         }
     }
 }
