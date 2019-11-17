@@ -20,14 +20,8 @@ namespace Huffman_code
             {
                 var hufCode = new HufCode();
                 hufCode.Text = hufCode.LoadText(args[1]);
-
-                var table = hufCode.MakeHuffmanTable();
-                var tree = hufCode.MakeHuffmanTree(table);
-                var treeCode = hufCode.GetHuffmanTable(tree);
-                int tail = 0;
-
-                var byteArray = hufCode.GetBynary(treeCode, out tail);
-                hufCode.Save(args[2], tree, tail, byteArray);
+                var byteArray = hufCode.CompressText();
+                hufCode.Save(args[2], byteArray);
             }
 
             if (args[0] == "x")
@@ -38,7 +32,7 @@ namespace Huffman_code
                 hufCode.SaveText(args[2], textResult);
             }
 
-            Console.ReadKey();
+            //Console.ReadKey();
         }
     }
 }

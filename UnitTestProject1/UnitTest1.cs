@@ -14,14 +14,10 @@ namespace UnitTestProject1
             var text = "Идея, положенная в основу кодировании Хаффмана, " +
                                    "основана на частоте появления символа в последовательности.";
             var filePath = Path.Combine(Path.GetTempPath(), "text1.txt");
-            var hufCode = new HufCode(text);
-            var table = hufCode.MakeHuffmanTable();
-            var tree = hufCode.MakeHuffmanTree(table);
-            var treeCode = hufCode.GetHuffmanTable(tree);
-            int tail = 0;
 
-            var byteArray = hufCode.GetBynary(treeCode, out tail);
-            hufCode.Save(filePath, tree, tail, byteArray);
+            var hufCode = new HufCode(text);
+            var byteArray = hufCode.CompressText();
+            hufCode.Save(filePath, byteArray);
             hufCode.Text = "";
 
             var textResult = hufCode.Load(filePath);
@@ -31,7 +27,8 @@ namespace UnitTestProject1
         public void CountTest()
         {
             var text = new HufCode("cababbbdca");
-            var res = text.MakeHuffmanTable();
+            var huffTable = new FrequencyTable(text.Text);
+            var res = huffTable.MakeFrequencyTable();
             Assert.AreEqual('b', res[3].Key);
             Assert.AreEqual(4, res[3].Value);
 
@@ -48,12 +45,16 @@ namespace UnitTestProject1
         public void TreeTest()
         {
             var huffCode = new HufCode("cababbbdca");
-            var table = huffCode.MakeHuffmanTable();
-            var tree = huffCode.MakeHuffmanTree(table);
-            var res1 = tree.LeftNode.Value;
-            var res2 = tree.RightNode.RightNode.Value;
-            var res3 = tree.RightNode.LeftNode.LeftNode.Value;
-            var res4 = tree.RightNode.LeftNode.RightNode.Value;
+            var huffTable = new FrequencyTable(huffCode.Text);
+            var table = huffTable.MakeFrequencyTable();
+            var huffTree = new HuffmanTree();
+
+            huffTree.MakeHuffmanTree(table);
+            var treeCode = huffTree.GetHuffmanTable(huffTree.Node);
+            var res1 = huffTree.Node.LeftNode.Value;
+            var res2 = huffTree.Node.RightNode.RightNode.Value;
+            var res3 = huffTree.Node.RightNode.LeftNode.LeftNode.Value;
+            var res4 = huffTree.Node.RightNode.LeftNode.RightNode.Value;
             Assert.AreEqual('b', res1);
             Assert.AreEqual('a', res2);
             Assert.AreEqual('d', res3);
@@ -63,9 +64,12 @@ namespace UnitTestProject1
         public void CodeTest()
         {
             var huffCode = new HufCode("cababbbdca");
-            var table = huffCode.MakeHuffmanTable();
-            var tree = huffCode.MakeHuffmanTree(table);
-            var treeCode = huffCode.GetHuffmanTable(tree);
+            var huffTable = new FrequencyTable(huffCode.Text);
+            var table = huffTable.MakeFrequencyTable();
+            var huffTree = new HuffmanTree();
+
+            huffTree.MakeHuffmanTree(table);
+            var treeCode = huffTree.GetHuffmanTable(huffTree.Node);
             Assert.AreEqual("11", treeCode['a']);
             Assert.AreEqual("0", treeCode['b']);
             Assert.AreEqual("101", treeCode['c']);
@@ -77,12 +81,17 @@ namespace UnitTestProject1
         {
             var text = "cababbbdca";
             var huffCode = new HufCode(text);
-            var table = huffCode.MakeHuffmanTable();
-            var tree = huffCode.MakeHuffmanTree(table);
-            var treeCode = huffCode.GetHuffmanTable(tree);
+            var huffTable = new FrequencyTable(huffCode.Text);
+            var table = huffTable.MakeFrequencyTable();
+            var huffTree = new HuffmanTree();
+
+            huffTree.MakeHuffmanTree(table);
+            var treeCode = huffTree.GetHuffmanTable(huffTree.Node);
             int tail = 0;
 
-            var byteArray = huffCode.GetBynary(treeCode, out tail);
+            var binaryHelper = new BinaryHelper();
+
+            var byteArray = binaryHelper.GetBynary(huffCode.Text, treeCode, out tail);
             Assert.AreEqual(187, byteArray[0]);
             Assert.AreEqual(18, byteArray[1]);
             Assert.AreEqual(224, byteArray[2]);
@@ -94,7 +103,10 @@ namespace UnitTestProject1
         {
             var huffCode = new HufCode();
             var bytes = new byte[3] { 187, 18, 224 };
-            var bit = huffCode.RestorBynaryString(bytes, 5);
+
+            var binaryHelper = new BinaryHelper();
+
+            var bit = binaryHelper.RestorBynaryString(bytes, 5);
             Assert.AreEqual("1011101100010010111", bit);
         }
 
