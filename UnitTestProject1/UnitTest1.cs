@@ -26,8 +26,7 @@ namespace UnitTestProject1
         [TestMethod]
         public void CountTest()
         {
-            var text = new HufCode("cababbbdca");
-            var huffTable = new FrequencyTable(text.Text);
+            var huffTable = new FrequencyTable("cababbbdca");
             var res = huffTable.MakeFrequencyTable();
             Assert.AreEqual('b', res[3].Key);
             Assert.AreEqual(4, res[3].Value);
